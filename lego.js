@@ -4,7 +4,23 @@
  * Сделано задание на звездочку
  * Реализованы методы or и and
  */
-exports.isStar = true;
+exports.isStar = false;
+
+
+var PRIORITIES = ['sortBy', 'filterIn', 'select', 'format', 'limit'];
+
+
+function clone(collection) {
+    var cloneCollection = {};
+    for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+            cloneCollection[key] = collection[key];
+        }
+    }
+
+    return cloneCollection;
+}
+
 
 /**
  * Запрос к коллекции
@@ -13,59 +29,109 @@ exports.isStar = true;
  * @returns {Array}
  */
 exports.query = function (collection) {
-    return collection;
+    var newCollection = collection.map(clone);
+    var functions = [].slice.call(arguments, 1);
+
+    functions.sort(function (a, b) {
+        return PRIORITIES.indexOf(a.name) > PRIORITIES.indexOf(b.name);
+    });
+    functions.forEach(function (currentFunction) {
+        newCollection = currentFunction(newCollection);
+    });
+
+    return newCollection;
 };
 
 /**
  * Выбор полей
  * @params {...String}
+ * @returns {Array}
  */
 exports.select = function () {
-    return;
+    var fields = [].slice.call(arguments);
+
+    return function select(collection) {
+        var newCollection = collection.map(function (person) {
+            var updatePerson = {};
+            for (var property in person) {
+                if (fields.indexOf(property) !== -1) {
+                    updatePerson[property] = person[property];
+                }
+            }
+
+            return updatePerson;
+        });
+
+        return newCollection;
+    };
 };
 
 /**
  * Фильтрация поля по массиву значений
  * @param {String} property – Свойство для фильтрации
  * @param {Array} values – Доступные значения
+ * @returns {Array} newCollection
  */
 exports.filterIn = function (property, values) {
-    console.info(property, values);
+    return function filterIn(collection) {
+        var newCollection = collection.filter(function (person) {
+            return values.indexOf(person[property]) !== -1;
+        });
 
-    return;
+        return newCollection;
+    };
 };
 
 /**
  * Сортировка коллекции по полю
  * @param {String} property – Свойство для фильтрации
  * @param {String} order – Порядок сортировки (asc - по возрастанию; desc – по убыванию)
+ * @returns {Array} collection
  */
 exports.sortBy = function (property, order) {
-    console.info(property, order);
+    return function sortBy(collection) {
+        collection.sort(function (a, b) {
+            return a[property] > b[property];
+        });
+        if (order === 'desc') {
+            collection.reverse();
+        }
 
-    return;
+        return collection;
+    };
 };
 
 /**
  * Форматирование поля
  * @param {String} property – Свойство для фильтрации
  * @param {Function} formatter – Функция для форматирования
+ * @returns {Array} newCollection
  */
 exports.format = function (property, formatter) {
-    console.info(property, formatter);
+    return function format(collection) {
+        var newCollection = collection.map(function (person) {
+            person[property] = formatter(person[property]);
 
-    return;
+            return person;
+        });
+
+        return newCollection;
+    };
 };
+
 
 /**
  * Ограничение количества элементов в коллекции
  * @param {Number} count – Максимальное количество элементов
+ * @returns {Array} collection
  */
 exports.limit = function (count) {
-    console.info(count);
+    return function limit(collection) {
 
-    return;
+        return collection.slice(0, count);
+    };
 };
+
 
 if (exports.isStar) {
 
