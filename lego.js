@@ -51,7 +51,7 @@ exports.select = function () {
     var fields = [].slice.call(arguments);
 
     return function select(collection) {
-        var newCollection = collection.map(function (person) {
+        return collection.map(function (person) {
             var updatePerson = {};
             for (var property in person) {
                 if (fields.indexOf(property) !== -1) {
@@ -61,8 +61,6 @@ exports.select = function () {
 
             return updatePerson;
         });
-
-        return newCollection;
     };
 };
 
@@ -74,11 +72,9 @@ exports.select = function () {
  */
 exports.filterIn = function (property, values) {
     return function filterIn(collection) {
-        var newCollection = collection.filter(function (person) {
+        return collection.filter(function (person) {
             return values.indexOf(person[property]) !== -1;
         });
-
-        return newCollection;
     };
 };
 
@@ -109,13 +105,11 @@ exports.sortBy = function (property, order) {
  */
 exports.format = function (property, formatter) {
     return function format(collection) {
-        var newCollection = collection.map(function (person) {
+        return collection.map(function (person) {
             person[property] = formatter(person[property]);
 
             return person;
         });
-
-        return newCollection;
     };
 };
 
