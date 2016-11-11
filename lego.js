@@ -91,7 +91,7 @@ exports.sortBy = function (property, order) {
             orderSign = -1;
         }
         collection.sort(function (a, b) {
-            return orderSign * (a[property] - b[property]);
+            return orderSign * (a[property] - b[property] ? 1 : -1);
         });
 
         return collection;
