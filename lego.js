@@ -33,7 +33,7 @@ exports.query = function (collection) {
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
-        return PRIORITIES.indexOf(a.name) > PRIORITIES.indexOf(b.name);
+        return PRIORITIES.indexOf(a.name) - PRIORITIES.indexOf(b.name);
     });
     functions.forEach(function (currentFunction) {
         newCollection = currentFunction(newCollection);
@@ -86,12 +86,13 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        collection.sort(function (a, b) {
-            return a[property] > b[property];
-        });
+        var orderSign = 1;
         if (order === 'desc') {
-            collection.reverse();
+            orderSign = -1;
         }
+        collection.sort(function (a, b) {
+            return orderSign * (a[property] - b[property]);
+        });
 
         return collection;
     };
