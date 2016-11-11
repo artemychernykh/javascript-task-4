@@ -30,12 +30,12 @@ exports.query = function (collection) {
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
-        return PRIORITIES.indexOf(a.name) > PRIORITIES.indexOf(b.name);
+        return PRIORITIES.indexOf(a.name) - PRIORITIES.indexOf(b.name);
     });
-    newCollection = functions.reduce(function (currentCollection, currentFunction) {
-        return currentFunction(currentCollection);
-    }, newCollection);
-
+    functions.forEach(function (currentFunction) {
+        newCollection = currentFunction(newCollection);
+    });
+    
     return newCollection;
 };
 
