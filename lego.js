@@ -6,9 +6,7 @@
  */
 exports.isStar = false;
 
-
-var PRIORITIES = ['sortBy', 'filterIn', 'select', 'format', 'limit'];
-
+var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
 
 function clone(collection) {
     var cloneCollection = {};
@@ -21,7 +19,6 @@ function clone(collection) {
     return cloneCollection;
 }
 
-
 /**
  * Запрос к коллекции
  * @param {Array} collection
@@ -33,11 +30,11 @@ exports.query = function (collection) {
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
-        return PRIORITIES.indexOf(a.name) > PRIORITIES.indexOf(b.name);
+        return PRIORITIES.indexOf(a.name) - PRIORITIES.indexOf(b.name);
     });
-    functions.forEach(function (currentFunction) {
-        newCollection = currentFunction(newCollection);
-    });
+    newCollection = functions.reduce(function (currentCollection, currentFunction) {
+        return currentFunction(currentCollection);
+    }, newCollection);
 
     return newCollection;
 };
@@ -51,7 +48,7 @@ exports.select = function () {
     var fields = [].slice.call(arguments);
 
     return function select(collection) {
-        var newCollection = collection.map(function (person) {
+        return collection.map(function (person) {
             var updatePerson = {};
             for (var property in person) {
                 if (fields.indexOf(property) !== -1) {
@@ -61,8 +58,6 @@ exports.select = function () {
 
             return updatePerson;
         });
-
-        return newCollection;
     };
 };
 
@@ -74,11 +69,9 @@ exports.select = function () {
  */
 exports.filterIn = function (property, values) {
     return function filterIn(collection) {
-        var newCollection = collection.filter(function (person) {
+        return collection.filter(function (person) {
             return values.indexOf(person[property]) !== -1;
         });
-
-        return newCollection;
     };
 };
 
@@ -90,12 +83,13 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        collection.sort(function (a, b) {
-            return a[property] > b[property];
-        });
+        var orderSign = 1;
         if (order === 'desc') {
-            collection.reverse();
+            orderSign = -1;
         }
+        collection.sort(function (a, b) {
+            return orderSign * (a[property] - b[property]);
+        });
 
         return collection;
     };
@@ -109,16 +103,13 @@ exports.sortBy = function (property, order) {
  */
 exports.format = function (property, formatter) {
     return function format(collection) {
-        var newCollection = collection.map(function (person) {
+        return collection.map(function (person) {
             person[property] = formatter(person[property]);
 
             return person;
         });
-
-        return newCollection;
     };
 };
-
 
 /**
  * Ограничение количества элементов в коллекции
@@ -131,7 +122,6 @@ exports.limit = function (count) {
         return collection.slice(0, count);
     };
 };
-
 
 if (exports.isStar) {
 
