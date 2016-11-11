@@ -7,7 +7,7 @@
 exports.isStar = false;
 
 
-var PRIORITIES = ['sortBy', 'filterIn', 'select', 'format', 'limit'];
+var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
 
 
 function clone(collection) {
@@ -35,9 +35,9 @@ exports.query = function (collection) {
     functions.sort(function (a, b) {
         return PRIORITIES.indexOf(a.name) - PRIORITIES.indexOf(b.name);
     });
-    functions.forEach(function (currentFunction) {
-        newCollection = currentFunction(newCollection);
-    });
+    newCollection = functions.reduce(function (currentCollection, currentFunction) {
+        return currentFunction(currentCollection);
+    }, newCollection);
 
     return newCollection;
 };
