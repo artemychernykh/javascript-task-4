@@ -35,7 +35,7 @@ exports.query = function (collection) {
     functions.forEach(function (currentFunction) {
         newCollection = currentFunction(newCollection);
     });
-    
+
     return newCollection;
 };
 
