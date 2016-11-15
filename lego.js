@@ -8,6 +8,17 @@ exports.isStar = false;
 
 var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
 
+function clone(collection) {
+    var cloneCollection = {};
+    for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+            cloneCollection[key] = collection[key];
+        }
+    }
+
+    return cloneCollection;
+}
+
 /**
  * Запрос к коллекции
  * @param {Array} collection
@@ -15,7 +26,7 @@ var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
  * @returns {Array}
  */
 exports.query = function (collection) {
-    var queryResult = collection.slice();
+    var queryResult = clone(collection);
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
@@ -72,14 +83,13 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        var orderSign = 1;
         if (order === 'desc') {
             collection.sort(function (a, b) {
-                return orderSign * (a[property] < b[property] ? 1 : -1);
+                return (a[property] < b[property] ? 1 : -1);
             });
         } else {
             collection.sort(function (a, b) {
-                return orderSign * (a[property] > b[property] ? 1 : -1);
+                return (a[property] > b[property] ? 1 : -1);
             });
         }
 
