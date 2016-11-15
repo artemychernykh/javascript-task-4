@@ -8,17 +8,6 @@ exports.isStar = false;
 
 var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
 
-function clone(collection) {
-    var cloneCollection = {};
-    for (var key in collection) {
-        if (collection.hasOwnProperty(key)) {
-            cloneCollection[key] = collection[key];
-        }
-    }
-
-    return cloneCollection;
-}
-
 /**
  * Запрос к коллекции
  * @param {Array} collection
@@ -26,7 +15,10 @@ function clone(collection) {
  * @returns {Array}
  */
 exports.query = function (collection) {
-    var newCollection = collection.map(clone);
+    // var newCollection = collection.map(clone);
+    var newCollection = collection.map(function (elementCollection) {
+        return Object.assign({}, elementCollection);
+    });
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
