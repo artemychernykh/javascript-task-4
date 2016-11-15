@@ -84,15 +84,11 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        if (order === 'asc') {
-            collection.sort(function (a, b) {
-                return (a[property] > b[property] ? 1 : -1);
-            });
-        }
+        collection.sort(function (a, b) {
+            return (a[property] > b[property] ? 1 : -1);
+        });
         if (order === 'desc') {
-            collection.sort(function (a, b) {
-                return (a[property] > b[property] ? -1 : 1);
-            });
+            collection.reverse();
         }
 
         return collection;
