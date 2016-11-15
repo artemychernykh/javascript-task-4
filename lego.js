@@ -27,8 +27,6 @@ function clone(collection) {
  */
 exports.query = function (collection) {
     var newCollection = collection.map(clone);
-    newCollection = collection.slice();
-    console.info(newCollection);
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
@@ -85,13 +83,15 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        var orderSign = 1;
-        if (order === 'desc') {
-            orderSign = -1;
+        if (order === 'asc') {
+            collection.sort(function (a, b) {
+                return (a[property] > b[property] ? 1 : -1);
+            });
+        } else {
+            collection.sort(function (a, b) {
+                return (a[property] < b[property] ? 1 : -1);
+            });
         }
-        collection.sort(function (a, b) {
-            return orderSign * (a[property] > b[property] ? 1 : -1);
-        });
 
         return collection;
     };
