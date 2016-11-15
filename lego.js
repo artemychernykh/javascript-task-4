@@ -88,7 +88,8 @@ exports.sortBy = function (property, order) {
             collection.sort(function (a, b) {
                 return (a[property] > b[property] ? 1 : -1);
             });
-        } else {
+        }
+        if (order === 'desc') {
             collection.sort(function (a, b) {
                 return (a[property] > b[property] ? -1 : 1);
             });
