@@ -26,8 +26,7 @@ function clone(collection) {
  * @returns {Array}
  */
 exports.query = function (collection) {
-    // var newCollection = collection.slice();
-    var newCollection = clone(collection);
+    var newCollection = collection.slice();
     var functions = [].slice.call(arguments, 1);
 
     functions.sort(function (a, b) {
@@ -84,12 +83,13 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        collection.sort(function (a, b) {
-            return (a[property] > b[property] ? 1 : -1);
-        });
+        var orderSign = 1;
         if (order === 'desc') {
-            collection.reverse();
+            orderSign = -1;
         }
+        collection.sort(function (a, b) {
+            return orderSign * (a[property] > b[property] ? 1 : -1);
+        });
 
         return collection;
     };
