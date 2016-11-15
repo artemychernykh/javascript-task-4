@@ -15,8 +15,8 @@ var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
  * @returns {Array}
  */
 exports.query = function (collection) {
-    // var newCollection = collection.map(clone);
-    var newCollection = collection.map(function (elementCollection) {
+    // var queryResult = collection.map(clone);
+    var queryResult = collection.map(function (elementCollection) {
         return Object.assign({}, elementCollection);
     });
     var functions = [].slice.call(arguments, 1);
@@ -24,11 +24,11 @@ exports.query = function (collection) {
     functions.sort(function (a, b) {
         return PRIORITIES.indexOf(a.name) - PRIORITIES.indexOf(b.name);
     });
-    newCollection = functions.reduce(function (currentCollection, currentFunction) {
+    queryResult = functions.reduce(function (currentCollection, currentFunction) {
         return currentFunction(currentCollection);
-    }, newCollection);
+    }, queryResult);
 
-    return newCollection;
+    return queryResult;
 };
 
 /**
@@ -57,7 +57,7 @@ exports.select = function () {
  * Фильтрация поля по массиву значений
  * @param {String} property – Свойство для фильтрации
  * @param {Array} values – Доступные значения
- * @returns {Array} newCollection
+ * @returns {Array} queryResult
  */
 exports.filterIn = function (property, values) {
     return function filterIn(collection) {
@@ -93,7 +93,7 @@ exports.sortBy = function (property, order) {
  * Форматирование поля
  * @param {String} property – Свойство для фильтрации
  * @param {Function} formatter – Функция для форматирования
- * @returns {Array} newCollection
+ * @returns {Array} queryResult
  */
 exports.format = function (property, formatter) {
     return function format(collection) {
