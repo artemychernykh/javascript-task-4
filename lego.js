@@ -105,7 +105,6 @@ exports.format = function (property, formatter) {
     };
 };
 
-
 /**
  * Ограничение количества элементов в коллекции
  * @param {Number} count – Максимальное количество элементов
@@ -117,7 +116,6 @@ exports.limit = function (count) {
         return collection.slice(0, count);
     };
 };
-
 
 if (exports.isStar) {
 
