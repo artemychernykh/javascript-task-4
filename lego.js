@@ -9,7 +9,7 @@ exports.isStar = false;
 var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
 
 function clone(collection) {
-    var cloneCollection = {};
+    var cloneCollection = [];
     for (var key in collection) {
         if (collection.hasOwnProperty(key)) {
             cloneCollection[key] = collection[key];
@@ -83,13 +83,13 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        if (order === 'desc') {
+        if (order === 'asc') {
             collection.sort(function (a, b) {
-                return (a[property] < b[property] ? 1 : -1);
+                return (a[property] > b[property] ? 1 : -1);
             });
         } else {
             collection.sort(function (a, b) {
-                return (a[property] > b[property] ? 1 : -1);
+                return (a[property] > b[property] ? -1 : 1);
             });
         }
 
