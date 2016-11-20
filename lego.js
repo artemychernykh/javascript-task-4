@@ -15,7 +15,6 @@ var PRIORITIES = ['sortBy', 'filterIn', 'select', 'limit', 'format'];
  * @returns {Array}
  */
 exports.query = function (collection) {
-    // var queryResult = collection.map(clone);
     var queryResult = collection.map(function (elementCollection) {
         return Object.assign({}, elementCollection);
     });
@@ -75,17 +74,11 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortBy(collection) {
-        if (order === 'asc') {
-            collection.sort(function (a, b) {
-                return (a[property] > b[property] ? 1 : -1);
-            });
-        } else {
-            collection.sort(function (a, b) {
-                return (a[property] < b[property] ? 1 : -1);
-            });
-        }
+        return collection.sort(function (a, b) {
+            var orderSign = order === 'asc' ? 1 : -1;
 
-        return collection;
+            return orderSign * (a[property] > b[property] ? 1 : -1);
+        });
     };
 };
 
